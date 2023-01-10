@@ -11,6 +11,13 @@ pub fn check_translation(&self,text:&String) -> bool {
     return self.translation.eq(text);
 }
 
+pub fn new(word:String, translation:String) -> Vocab {
+    return Vocab {
+        word,
+        translation
+    };
+}
+
 pub fn get_word(&self) -> &String
 {
     return &self.word;
