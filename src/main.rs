@@ -1,10 +1,10 @@
 pub mod voclist;
 pub mod dbhelper;
-use crate::voclist::VocabList;
 use crate::voclist::Vocab;
 use rand::Rng;
 use dbhelper::read_vocabs;
-use dbhelper::create_database;
+use dbhelper::into_next_drawer;
+use dbhelper::random_from_lowest_drawer;
 use std::io;
 
 fn main() {
@@ -14,26 +14,21 @@ let mut number:usize;
 
 let mut modus:String = String::new();
 
-create_database();
 read_vocabs();
-println!("Modus auswählen (1/2): ");
+println!("Modus 1: OldNorse -> German");
+println!("Modus 2: German -> OldNorse");
+println!("Modus auswählen: ");
 io::stdin().read_line(&mut modus).expect("");
 
-let modus:i32 = modus.trim().parse().expect("");
-
-
-
-let list:VocabList = VocabList::create_vocab_list(modus);
-let list:&Vec<Vocab> = list.get_list();
+let modus:usize = modus.trim().parse().expect("");
 
 let lang:String = String::from(if modus==1 {"Deutsch"} else {"Altisländisch"});
 
 loop {
 
-number = rand::thread_rng().gen_range(0..=100000);
-number = number%list.len();
+let next_v: Vocab = random_from_lowest_drawer();
 
-println!("Was heißt {} auf {}? ",list[number].get_word(),lang);
+println!("Was heißt {} auf {}? ",next_v.get_word(modus),lang);
 
 text = String::new();
 io::stdin().read_line(&mut text).expect("");
@@ -43,12 +38,13 @@ text = String::from(text.trim());
     break;
 }
 
-if list[number].check_translation(&text)
+if next_v.check_translation(&text,modus)
 {
     println!("Richtig!");
+    into_next_drawer(next_v.get_id());
 }
 else {
-    println!("Falsch! Die richtige Antwort ist {}",list[number].get_translation());
+    println!("Falsch! Die richtige Antwort ist {}",next_v.get_translation(modus));
 }
 
 }

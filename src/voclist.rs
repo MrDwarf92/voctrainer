@@ -1,69 +1,53 @@
-use std::fs;
-
 pub struct Vocab {
-word:String,
-translation:String
+id: i64,
+lang_1:String,
+lang_2:String
 }
 
 impl Vocab {
 
-pub fn check_translation(&self,text:&String) -> bool {
-    return self.translation.eq(text);
+pub fn check_translation(&self,text:&String,mode:usize) -> bool {
+    return self.get_translation(mode).eq(text);
 }
 
-pub fn new(word:String, translation:String) -> Vocab {
+pub fn new(id:i64, lang_1:String, lang_2:String) -> Vocab {
     return Vocab {
-        word,
-        translation
+        id,
+        lang_1,
+        lang_2
     };
 }
 
-pub fn get_word(&self) -> &String
+pub fn get_word(&self, mode:usize) -> &String
 {
-    return &self.word;
-}
-
-pub fn get_translation(&self) ->&String
-{
-    return &self.translation;
-}
-
-}
-
-
-pub struct VocabList {
-    list:Vec<Vocab>
-}
-
-impl VocabList {
-
-   pub fn create_vocab_list(modus:i32) -> VocabList {
-        let file_path:String = String::from("/home/stefan/Rust/voctrainer/src/vocabs.txt");
-        let contents = fs::read_to_string(file_path).expect("");
-        let split = contents.trim().split("\n");
-        let lines:Vec<&str> = split.collect();
-
-        let mut vlist:Vec<Vocab> = Vec::new();
-        let mut counter:i32 = 0;
-
-        let i_1 = if modus == 1 {0} else {1};
-        let i_2 = if modus == 1 {1} else {0};
-
-        for s in lines {
-            if counter==0 {
-            counter+=1; 
-            continue;
-            }
-            let words:Vec<&str> = s.split(";").collect();
-            vlist.push(Vocab{word:String::from(words[i_1]),
-                translation:String::from(words[i_2])
-            });
-        }
-
-        return VocabList{list:vlist};
+    if mode==1 {
+        return &self.lang_1;
     }
-
-   pub fn get_list(&self) -> &Vec<Vocab> {
-       return &(self.list)
-   }
+    else {
+        return &self.lang_2;
+    }
 }
+
+pub fn get_translation(&self, mode:usize) ->&String
+{
+    if mode==1 {
+        return &self.lang_2;
+    }
+    else {
+        return &self.lang_1;
+    }
+}
+
+pub fn get_lang_1(&self) -> &String {
+    return &self.lang_1;
+}
+
+pub fn get_lang_2(&self) -> &String {
+    return &self.lang_2;
+}
+
+pub fn get_id(&self)->i64 {
+    return self.id;
+}
+}
+
