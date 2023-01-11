@@ -2,8 +2,9 @@ pub mod voclist;
 pub mod dbhelper;
 use crate::voclist::VocabList;
 use crate::voclist::Vocab;
-use crate::dbhelper::add_entry;
 use rand::Rng;
+use dbhelper::read_vocabs;
+use dbhelper::create_database;
 use std::io;
 
 fn main() {
@@ -13,12 +14,13 @@ let mut number:usize;
 
 let mut modus:String = String::new();
 
-add_entry(&Vocab::new(String::from("A"),String::from("B")));
-
+create_database();
+read_vocabs();
 println!("Modus auswählen (1/2): ");
 io::stdin().read_line(&mut modus).expect("");
 
 let modus:i32 = modus.trim().parse().expect("");
+
 
 
 let list:VocabList = VocabList::create_vocab_list(modus);
