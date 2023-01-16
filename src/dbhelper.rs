@@ -25,7 +25,6 @@ fn add_entry(vocab:&Vocab) {
     let word_2: &str = &vocab.get_lang_2()[..];
     stmt.bind((1,word_1)).unwrap();
     stmt.bind((2,word_2)).unwrap();
-
     stmt.next().unwrap();
     let count: i64 = stmt.read::<i64,_>("Count").unwrap();
     if count==0 {
@@ -36,8 +35,26 @@ fn add_entry(vocab:&Vocab) {
     }
 }
 
+fn create_db_if_not_exists() {
+    let conn = sqlite::open(FILE).unwrap();
+    let mut query: String = String::from("SELECT * FROM Vocabulary;");
+    match conn.execute(query) {
+        Ok(x) => return,
+        Err(m) => println!("No database found. Creating database Vocabulary")
+    };
+    let query: String = String::from("
+        CREATE TABLE Vocabulary (
+        ID INTEGER PRIMARY KEY AUTOINCREMENT,
+        OldNorse VARCHAR(30) NOT NULL,
+        German VARCHAR(30) NOT NULL,
+        Drawer INTEGER DEFAULT 0
+            );");
+   conn.execute(query).unwrap();
+
+}
 
 pub fn read_vocabs() {
+        create_db_if_not_exists();
         let file_path:String = String::from("/home/stefan/Rust/voctrainer/src/vocabs.txt");
         let contents = fs::read_to_string(file_path).expect("");
         let split = contents.trim().split("\n");
